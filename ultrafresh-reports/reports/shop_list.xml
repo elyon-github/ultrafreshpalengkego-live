@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding='utf-8'?>
+<odoo>
+	<!-- REPORT BINDING -->
+	<record id="so_accomplishment_report_bind" model="ir.actions.report">
+		<field name="name">Shopping List</field>
+		<field name="model">sale.order</field>
+		<field name="report_type">qweb-pdf</field>
+		<field name="report_name">ultrafresh-reports.shop_list</field>
+		<field name="report_file">ultrafresh-reports.shop_list</field>
+		<field name="binding_model_id" ref="sale.model_sale_order"/>
+		<field name="binding_type">report</field>
+		<!-- <field name="paperformat">shop_list_paper_format</field> -->
+	</record>
+
+    <template id="shop_list">
+		<t t-call='web.basic_layout'>
+			<t t-set='data' t-value="env['sale.order'].fetch_shop_list(docs)"/>
+			<div class='page'>
+				<t t-foreach='data' t-as='val'>
+					<div style="border:2px solid black;">
+						<div class='row'>
+							<div class='col-12'><h2><t t-esc="val['prod']"/></h2></div> 
+						</div>
+
+						<t t-foreach="val['details']" t-as="det">
+							<div class='row' style='min-height:25px;border-top:1px dotted black;border-bottom:1px dotted black'>
+								<div class='col-4'><t t-esc="det['order']"/></div>
+								<div class='col-4'><t t-esc="det['notes']"/></div>
+								<div class='col-4'><t t-esc="str(det['qty']) + ' ' + det['uom']"/></div>
+							</div>
+						</t>
+						
+						<t t-foreach="val['total_qtys']" t-as="totals">
+							<div class='row'>
+								<div class='col-8'></div>
+								<div class='col-4'><h5>TOTAL:</h5></div>
+							</div>
+							<div class='row' style='min-height:20px;'>
+								<div class='col-8'></div>
+								<div class='col-4'><h6><t t-esc="str(totals['qty']) + ' ' + totals['uom']"/></h6></div>
+							</div>
+						</t>
+					</div>
+				</t>
+			</div>
+        </t>
+    </template>
+
+	<record id="shop_list_paper_format" model="report.paperformat">
+        <field name="name">Shop List</field>
+        <field name="default" eval="True" />
+        <field name="format">custom</field>
+        <field name="page_height">355</field>
+        <field name="page_width">216</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">3</field>
+        <field name="margin_bottom">3</field>
+        <field name="margin_left">4</field>
+        <field name="margin_right">4</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">0</field>
+        <field name="dpi">100</field>
+        <!-- <field name="associated_reports">form_2307</field> -->
+    </record>
+
+</odoo>
